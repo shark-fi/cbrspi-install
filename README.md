@@ -8,7 +8,7 @@ sudo pip install timezonefinder
 
 sudo pip install netifaces
 
-sudo pip install git+https://github.com/fgsect/scat
+sudo pip install signalcat
 
 sudo pip3 install --upgrade qcsuper
 
