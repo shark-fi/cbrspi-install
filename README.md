@@ -1,7 +1,5 @@
 sudo apt install minicom
 
-sudo pip install pandas
-
 sudo pip install backports.zoneinfo
 
 sudo pip install timezonefinder
