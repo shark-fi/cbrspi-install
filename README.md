@@ -23,3 +23,7 @@ sudo dpkg -i --force-overwrite cbrspi.deb
 sudo rm /usr/local/bin/qscan
 
 sudo ln -s /opt/wlanpi-grafana/qscan/qscan.py /usr/local/bin/qscan
+
+sudo rm /usr/local/bin/cellsurvey
+
+sudo ln -s /opt/wlanpi-grafana/qscan/cellular_backend.py /usr/local/bin/cellsurvey
