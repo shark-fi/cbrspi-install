@@ -14,6 +14,8 @@ sudo pip install crcmod
 
 sudo pip install pycrate
 
+sudo pip install glob2
+
 git clone https://github.com/shark-fi/cbrspi-install.git
 
 cd cbrspi-install
