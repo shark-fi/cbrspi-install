@@ -20,7 +20,7 @@ git clone https://github.com/shark-fi/cbrspi-install.git
 
 cd cbrspi-install
 
-sudo dpkg -i --force-overwrite cbrspi.deb
+sudo dpkg -i cbrspi-install.deb
 
 sudo rm /usr/local/bin/qscan
 
