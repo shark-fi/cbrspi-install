@@ -54,43 +54,24 @@ Reboot the WLAN Pi and the software is ready.
 
 DeadEye's FPMS is a Python 3.13 virtualenv and its stock packages are newer, so
 the install is a set of file-copy scripts in [`deadeye/`](deadeye/) rather than
-a `.deb`.
-
-### 1. Set the clock
-
-The DeadEye image has no RTC and its time sync is wedged, so a fresh boot's
-clock is hours off — apt then rejects every repo signature ("InRelease … not
-live until …"). Set it once from an HTTPS `Date` header:
-
-```bash
-sudo date -u -s "$(curl -sI https://www.cloudflare.com | grep -i '^date:' | sed 's/^[Dd]ate: *//')"
-```
-
-`install-deadeye.sh` repeats this, and the `chrony` it installs keeps the clock
-correct from then on — but the Grafana install in step 2 needs the clock right
-first.
-
-### 2. Install Grafana
-
-The 26.10 image ships **without** Grafana (removed to keep the image under
-GitHub's 2 GiB file-size limit). The Grafana signing key already ships on the
-image, so just add the apt source and install the WLAN Pi Grafana package:
-
-```bash
-echo "deb [signed-by=/usr/share/keyrings/grafana.key] https://apt.grafana.com stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
-sudo apt update
-sudo apt install -y wlanpi-grafana
-```
-
-### 3. Install the cellular stack
+a `.deb`. Run the three scripts in order:
 
 ```bash
 git clone https://github.com/shark-fi/cbrspi-install.git
 cd cbrspi-install/deadeye
+sudo bash install-grafana-deadeye.sh
 sudo bash install-deadeye.sh
 bash install-fpms-deadeye.sh
 ```
 
+Then reboot the WLAN Pi.
+
+- **`install-grafana-deadeye.sh`** (run with `sudo`, **first**) sets the clock
+  and installs Grafana. The 26.10 image ships **without** Grafana (removed to
+  keep it under GitHub's 2 GiB limit) and has no RTC with a wedged time sync, so
+  a fresh boot's clock is hours off and apt rejects every repo signature until
+  it is set. This script bootstraps the clock from an HTTPS `Date` header, adds
+  the Grafana apt repo, and installs `wlanpi-grafana`.
 - **`install-deadeye.sh`** (run with `sudo`) installs the `qscan` datastream +
   dashboard, pulls the Python deps (`chrony`, pyserial, numpy, pandas,
   timezonefinder, …), frees the modem from ModemManager, and allows the stream
@@ -98,7 +79,8 @@ bash install-fpms-deadeye.sh
 - **`install-fpms-deadeye.sh`** (run as your normal user — it elevates each step
   itself) adds the FPMS "Cellular" menu and the NetViews remote-menu hook.
 
-Reboot the WLAN Pi.
+All three are idempotent — safe to re-run (see the re-run note below after a
+package update).
 
 ### Using it
 
