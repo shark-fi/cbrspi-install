@@ -91,6 +91,11 @@ package update).
 - **Data connection (QMI-WWAN):** with a provisioned data SIM inserted, bring
   up `wwan0` with `sudo qmiwwan -s <APN>`. DeadEye's stock kernel drivers bind
   the modem, so no module build is needed.
+- **MiFi (share the cellular connection over Wi-Fi):** FPMS **Cellular → MiFi
+  Mode → Turn On** turns the onboard `wlan0` into a Wi-Fi AP and NATs its
+  clients out the cellular uplink (`wwan0`). The on-screen alert shows the SSID
+  and password; **Turn Off** returns the radio to scanning. Also `sudo mifi
+  on|off|status`. On-demand (the Pi boots into normal scanning mode).
 
 Re-run the matching script after a `wlanpi-fpms`, `wlanpi-grafana`, or
 `wlanpi-core` package update — each overlays files those packages own, and an

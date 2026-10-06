@@ -85,6 +85,19 @@ install -m 0755 "$HERE/opt/wlanpi-grafana/QMI-WWAN/Goonline/default.script" /usr
 ln -sf "$GRAF/QMI-WWAN/Goonline/simcom-cm" /usr/local/bin/qmiwwan
 echo "  qmiwwan ready -- connect with:  sudo qmiwwan -s <APN>"
 
+echo "== install MiFi mode (wlan0 AP sharing the cellular uplink) =="
+# MiFi turns the onboard wlan0 into an AP (hostapd + dnsmasq + nftables NAT out
+# wwan0), toggled from the FPMS Cellular > MiFi Mode menu. NM leaves wlan0
+# unmanaged on this image, so hostapd drives it directly. Units are installed
+# DISABLED -- MiFi is on-demand (the switcher starts them + configures the IP
+# and NAT); the box still boots into normal scanning mode.
+install -d "$GRAF/mifi"
+install -m 0755 "$HERE/opt/wlanpi-grafana/mifi/mifi-deadeye.sh" "$GRAF/mifi/mifi-deadeye.sh"
+ln -sf "$GRAF/mifi/mifi-deadeye.sh" /usr/local/sbin/mifi
+install -m 0644 "$HERE/lib/systemd/system/mifi-hostapd.service" /usr/lib/systemd/system/mifi-hostapd.service
+install -m 0644 "$HERE/lib/systemd/system/mifi-dnsmasq.service" /usr/lib/systemd/system/mifi-dnsmasq.service
+echo "  MiFi ready -- toggle from FPMS Cellular > MiFi Mode, or: sudo mifi on|off|status"
+
 echo "== dashboard =="
 # provisioning silently rejects dashboards with a non-null "id"; strip it.
 python3 -c "import json,sys; d=json.load(open('$HERE/var/lib/grafana/dashboards/qscan.json')); d['id']=None; json.dump(d, open('/var/lib/grafana/dashboards/qscan.json','w'))"
