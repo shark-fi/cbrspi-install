@@ -68,6 +68,23 @@ exec python3 /opt/wlanpi-grafana/qscan/qscan.py "$@"
 WRAP
 chmod +x /usr/local/bin/qscan
 
+echo "== install the QMI-WWAN connection manager (simcom-cm) =="
+# Data-connection labs bring up wwan0 over QMI with the simcom-cm userspace
+# manager (symlinked as `qmiwwan`). Unlike Bullseye, DeadEye needs NO
+# out-of-tree kernel modules: the stock Trixie kernel's in-tree qmi_wwan +
+# option drivers already bind the modem (cdc-wdm0 + wwan0). So this installs
+# only the userspace manager + its udhcpc dispatcher script.
+install -d "$GRAF/QMI-WWAN/Goonline"
+cp -a "$HERE/opt/wlanpi-grafana/QMI-WWAN/Goonline/." "$GRAF/QMI-WWAN/Goonline/"
+chmod +x "$GRAF/QMI-WWAN/Goonline/simcom-cm"
+# simcom-cm runs `busybox udhcpc -s /usr/share/udhcpc/default.script` to apply
+# the lease on wwan0, so that script must be in place (busybox + net-tools are
+# already on the image).
+install -d /usr/share/udhcpc
+install -m 0755 "$HERE/opt/wlanpi-grafana/QMI-WWAN/Goonline/default.script" /usr/share/udhcpc/default.script
+ln -sf "$GRAF/QMI-WWAN/Goonline/simcom-cm" /usr/local/bin/qmiwwan
+echo "  qmiwwan ready -- connect with:  sudo qmiwwan -s <APN>"
+
 echo "== dashboard =="
 # provisioning silently rejects dashboards with a non-null "id"; strip it.
 python3 -c "import json,sys; d=json.load(open('$HERE/var/lib/grafana/dashboards/qscan.json')); d['id']=None; json.dump(d, open('/var/lib/grafana/dashboards/qscan.json','w'))"

@@ -88,6 +88,9 @@ package update).
   Survey → Scan & View** shows live LTE/5G cells on screen.
 - **Grafana:** top menu → **Data Streams → Scanner LTE/5G → Play**, then open
   the **Scanner LTE/5G** dashboard (serving cell + SINR + band scan).
+- **Data connection (QMI-WWAN):** with a provisioned data SIM inserted, bring
+  up `wwan0` with `sudo qmiwwan -s <APN>`. DeadEye's stock kernel drivers bind
+  the modem, so no module build is needed.
 
 Re-run the matching script after a `wlanpi-fpms`, `wlanpi-grafana`, or
 `wlanpi-core` package update — each overlays files those packages own, and an
