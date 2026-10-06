@@ -1,0 +1,12 @@
+[Unit]
+Description=Streams LTE/5G cellular + GPS data to the WLAN Pi Grafana Cellular dashboard
+
+[Service]
+ExecStart=/opt/wlanpi-grafana/qscan/stream-qscan.sh
+WorkingDirectory=/opt/wlanpi-grafana/qscan
+EnvironmentFile=/etc/environment
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
