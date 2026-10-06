@@ -30,7 +30,12 @@ apt-get update -qq
 # wedges (never polls) and DHCP often hands out a non-NTP server, so the Pi's
 # clock drifts -- a skewed clock then breaks apt signature verification. chrony
 # replaces timesyncd, steps large offsets, and handles the RTC-less Pi.
-apt-get install -y python3-serial python3-numpy python3-pandas python3-netifaces minicom chrony
+# hostapd/dnsmasq-base/net-tools/nftables back MiFi (wlan0 AP + DHCP + NAT) and
+# the qmiwwan udhcpc script; they ship on the stock image but install
+# explicitly so a clean build can't trip on a missing one. dnsmasq-base (not
+# dnsmasq) = the binary without a system service that would grab port 53.
+apt-get install -y python3-serial python3-numpy python3-pandas python3-netifaces minicom chrony \
+    hostapd dnsmasq-base net-tools nftables
 # core deps not in apt -> pip into the system env (PEP 668). Required for the
 # cellular Grafana stream; abort if these fail.
 pip install --break-system-packages --no-input timezonefinder crcmod pycrate
